@@ -30,7 +30,8 @@ public class Date {
 			return false;
 		}
 		
-		if (!(1 <= d && d < getMaxDays(m, y))) {
+		// System.out.println(getMaxDays(m, y));
+		if (!(1 <= d && d <= getMaxDays(m, y))) {
 			System.out.println("ERR: Invalid day.");
 			return false;
 		}
@@ -92,6 +93,7 @@ public class Date {
 		}
 	}
 	
+	// return 02 if 2
 	public static String handleNumber(int num) {
 		if (num < 10) return "0" + num;
 		else return String.valueOf(num);

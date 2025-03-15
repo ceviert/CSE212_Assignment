@@ -3,6 +3,7 @@ import java.util.Scanner;
 public class Menu {
 	
 	static Scanner input = new Scanner(System.in);
+	static boolean dateOkay = true;
 	
 	private static boolean isDateFormatValid(String dateInput) {
 		char[] charArrayOfDateInput = dateInput.toCharArray();
@@ -34,6 +35,9 @@ public class Menu {
 		Date theDate = null;
 		if (Date.isDateValid(day, month, year)) {
 			theDate = new Date(day, month, year);
+			dateOkay = true;
+		} else {
+			dateOkay = false;
 		}
 		return theDate;
 	}
@@ -71,7 +75,7 @@ public class Menu {
 			return;
 		}
 		Date theDate = parseDate(date);
-		if (Date.isDateValid(theDate.getDay(), theDate.getMonth(), theDate.getYear())) {
+		if (dateOkay) {
 			Book theBook = new Book(name, isbn, theDate);
 			addToArray(theBook);
 		}
@@ -86,16 +90,19 @@ public class Menu {
 	private static void displayBooks() {
 		if (Book.bookCount == 0) {
 			System.out.println("ERR: No books!");
+			waitForKey();
 			return;
 		}
 		System.out.println("Checked out book list:");
 		for (int i = Book.bookCount, row = 0; i != 0; i--, row++) {
-			System.out.println("	Book titled '" + Book.bookArray[row][0] + "' that has ISBN# " + Book.bookArray[row][1] + " is due " + Book.bookArray[row][2]);
+			System.out.println("--> Book titled '" + Book.bookArray[row][0] + "' that has ISBN# " + Book.bookArray[row][1] + " is due " + Book.bookArray[row][2]);
 		}
+		waitForKey();
 	}
 	
 	private static void totalNumberOfBooksCheckedOut() {
 		System.out.println("Total number of books checked out: " + Book.bookCount);
+		waitForKey();
 	}
 	
 	private static void changeDateFormat() {
@@ -113,6 +120,11 @@ public class Menu {
 		if (choice == 1) Book.type = Book.DATE_PRINT_TYPE.MONTH_NUMBER;
 		else if (choice == 2) Book.type = Book.DATE_PRINT_TYPE.MONTH_NAME;
 		else System.out.println("ERR: Invalid selection.");
+	}
+	
+	private static void waitForKey() {
+		input.nextLine(); 
+        input.nextLine();
 	}
 	
 	public static void start() {
