@@ -24,15 +24,31 @@ public class Date {
 		setDate(day, month.ordinal(), year);
 	}
 	
-	private void setDate(int day, int month, int year) {
-		if (1 <= month && month < 13) this.month = month;
+	public static boolean isDateValid(int d, int m, int y) {
+		if (!(1 <= m && m < 13)) {
+			System.out.println("ERR: Invalid month.");
+			return false;
+		}
 		
-		if (1 <= day && day < getMaxDays(month, year)) this.day = day;
+		if (!(1 <= d && d < getMaxDays(m, y))) {
+			System.out.println("ERR: Invalid day.");
+			return false;
+		}
 		
-		if (1 <= year && year <= 9999) this.year = year;
+		if (!(1 <= y && y <= 9999)) {
+			System.out.println("ERR: Invalid year.");
+			return false;
+		}
+		return true;
 	}
 	
-	private int getMaxDays(int month, int year) {
+	private void setDate(int day, int month, int year) {
+		this.day = day;
+		this.month = month;
+		this.year = year;
+	}
+	
+	private static int getMaxDays(int month, int year) {
 		if (month < 8) {
 			if (month % 2 == 1) return 31;
 		    if (month == 2) return (year % 4 == 0) ? 29 : 28; // february
@@ -76,7 +92,7 @@ public class Date {
 		}
 	}
 	
-	private String handleNumber(int num) {
+	public static String handleNumber(int num) {
 		if (num < 10) return "0" + num;
 		else return String.valueOf(num);
 	}
@@ -85,11 +101,27 @@ public class Date {
 		System.out.println(day + " " + getMonthName(months[month]) + " " + year);
 	}
 	
+	public String getFormattedText() {
+		return day + " " + getMonthName(months[month]) + " " + year;
+	}
+	
 	public void printFormattedNumbered() {
 		System.out.println(handleNumber(day) + "/" + handleNumber(month) + "/" + year);
 	}
 	
 	public String getFormattedNumbered() {
 		return handleNumber(day) + "/" + handleNumber(month) + "/" + year;
+	}
+	
+	public int getDay() {
+		return day;
+	}
+	
+	public int getMonth() {
+		return month;
+	}
+	
+	public int getYear() {
+		return year;
 	}
 }
