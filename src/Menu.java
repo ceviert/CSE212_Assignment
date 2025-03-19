@@ -2,6 +2,22 @@ import java.util.Scanner;
 
 public class Menu {
 	
+	private static enum SUBMENU {
+		ZERO,
+		ADD_NEW_BOOK,
+		ADD_NEW_ONLINE_ARTICLE,
+		CREATE_MEMBER_ACCOUNT,
+		CHECKOUT_BOOK,
+		GIVE_ACCESS_TO_ONLINE_ARTICLE,
+		EXIT
+	}
+	
+	// decide whether to print month as string or numbered
+	public static enum DATE_PRINT_TYPE {MONTH_NAME, MONTH_NUMBER};
+			
+	// numbered as default, can be changed in runtime through menu
+	public static DATE_PRINT_TYPE type = DATE_PRINT_TYPE.MONTH_NUMBER;
+	
 	static Scanner input = new Scanner(System.in);
 	static boolean dateOkay = true;
 	

@@ -2,20 +2,14 @@ public class Book {
 	
 	private String name;
 	private String isbn;
-	private Date date;
-	public static String[][] bookArray = new String[5][3];
+	private Date dueDate;
+	public static Book[] bookArray;
 	public static int bookCount = 0;
 	
-	// decide whether to print month as string or numbered
-	public static enum DATE_PRINT_TYPE {MONTH_NAME, MONTH_NUMBER};
-		
-	// numbered as default, can be changed in runtime through menu
-	public static DATE_PRINT_TYPE type = DATE_PRINT_TYPE.MONTH_NUMBER;
-	
-	public Book(String name, String isbn, Date date) {
+	public Book(String name, String isbn, Date dueDate) {
 		this.name = name;
 		this.isbn = isbn;
-		this.date = date;
+		this.dueDate = dueDate;
 	}
 	
 	public String[] getBookInfoArray() {
@@ -24,10 +18,10 @@ public class Book {
 		info[1] = isbn;
 		switch (type) {
 		case MONTH_NAME:
-			info[2] = date.getFormattedText();
+			info[2] = dueDate.getFormattedText();
 			break;
 		case MONTH_NUMBER:
-			info[2] = date.getFormattedNumbered();
+			info[2] = dueDate.getFormattedNumbered();
 			break;
 		default:
 			info[2] = "???";
