@@ -9,25 +9,46 @@ public class Menu {
 		CREATE_MEMBER_ACCOUNT,
 		CHECKOUT_BOOK,
 		GIVE_ACCESS_TO_ONLINE_ARTICLE,
-		EXIT
+		EXIT;
+		
+		private static SUBMENU[] values = SUBMENU.values();
 	}
 	
-	// decide whether to print month as string or numbered
-	public static enum DATE_PRINT_TYPE {MONTH_NAME, MONTH_NUMBER};
-			
-	// numbered as default, can be changed in runtime through menu
-	public static DATE_PRINT_TYPE type = DATE_PRINT_TYPE.MONTH_NUMBER;
-	
 	static Scanner input = new Scanner(System.in);
-	static boolean dateOkay = true;
 	
-	private static boolean isDateFormatValid(String dateInput) {
-		char[] charArrayOfDateInput = dateInput.toCharArray();
-		if (charArrayOfDateInput.length == 10 && charArrayOfDateInput[2] == '/' 
-				&& charArrayOfDateInput[5] == '/') {
-			return true;
+	public static void start() {
+		int choice;
+		boolean terminate = false;
+		while (true) {
+			printMenu();
+			choice = input.nextInt();
+			if (!(0 < choice && choice <= SUBMENU.values.length)) {
+				System.out.println("ERR: You've entered invalid choice, try again.");
+				continue;
+			}
+			SUBMENU selection = SUBMENU.values[choice];
+			switch (selection) {
+			case ADD_NEW_BOOK: 
+				addNewBook(); 
+				break;
+			case ADD_NEW_ONLINE_ARTICLE: 
+				addNewArticle();
+				break;
+			case CREATE_MEMBER_ACCOUNT: 
+				createAccount();
+				break;
+			case CHECKOUT_BOOK: 
+				checkOut();
+				break;
+			case GIVE_ACCESS_TO_ONLINE_ARTICLE:
+				giveAccess();
+				break;
+			case EXIT:
+				terminate = true;
+				break;
+			}
+			if (terminate) break;
 		}
-		return false;
 	}
 	
 	private static boolean isISBNValid(String isbnInput) {
@@ -38,41 +59,22 @@ public class Menu {
 		return false;
 	}
 	
-	private static Date parseDate(String dateInput) {
-		String dayText = dateInput.substring(0, 2);
-		int day = Integer.parseInt(dayText);
-
-		String monthText = dateInput.substring(3, 5);
-		int month = Integer.parseInt(monthText);
-
-		String yearText = dateInput.substring(6, 10);
-		int year = Integer.parseInt(yearText);
-
-		Date theDate = null;
-		if (Date.isDateValid(day, month, year)) {
-			theDate = new Date(day, month, year);
-			dateOkay = true;
-		} else {
-			dateOkay = false;
-		}
-		return theDate;
-	}
-	
 	private static void printMenu() {
 		System.out.println("===================================================");
 		System.out.println("                 WELCOME TO LIBMAN                 ");
 		System.out.println("===================================================");
-		System.out.println("1. Add a new book to the checkout list");
-		System.out.println("2. Display all books checked out");
-		System.out.println("3. Display the total number of books checked out");
-		System.out.println("4. Change date format");
-		System.out.println("5. Exit");
+		System.out.println("1. Add a new book");
+		System.out.println("2. Add a new online article");
+		System.out.println("3. Create a member account");
+		System.out.println("4. Check out a book");
+		System.out.println("5. Give access to an online article");
+		System.out.println("6. Exit");
 		System.out.print(">");
 	}
 	
 	private static void addNewBook() {
-		if (Book.bookCount == 5) {
-			System.out.println("Library is full! Cannot add more than 5 books.");
+		if (Book.bookCount == 10) {
+			System.out.println("Library is full! Cannot add more than 10 books.");
 			return;
 		}
 		System.out.print("Enter book name:");
@@ -84,90 +86,110 @@ public class Menu {
 			System.out.println("ERR: Invalid ISBN number.");
 			return;
 		}
-		System.out.print("Enter due date (DD/MM/YYYY):");
-		String date = input.nextLine();
-		if (!isDateFormatValid(date)) {
-			System.out.println("ERR: Invalid date format.");
-			return;
-		}
-		Date theDate = parseDate(date);
-		if (dateOkay) {
-			Book theBook = new Book(name, isbn, theDate);
-			addToArray(theBook);
-		}
+		Book theBook = new Book(name, isbn);
+		System.out.println(name + isbn);
+		addToBookArray(theBook);
 	}
 	
-	private static void addToArray(Book book) {
-		Book.bookArray[Book.bookCount] = book.getBookInfoArray();
+	private static void addToBookArray(Book theBook) {
+		Book.bookArray[Book.bookCount] = theBook;
 		Book.bookCount++;
-		System.out.println("Book checked out successfully! (" + Book.bookCount + "/5 books)");
+		System.out.println("Book added successfully! (" + Book.bookCount + "/10 books)");
 	}
 	
-	private static void displayBooks() {
-		if (Book.bookCount == 0) {
-			System.out.println("ERR: No books!");
-			waitForKey();
+	private static void addNewArticle() {
+		if (OnlineArticle.articleCount == 10) {
+			System.out.println("Library is full! Cannot add more than 10 articles.");
 			return;
 		}
-		System.out.println("Checked out book list:");
-		for (int i = Book.bookCount, row = 0; i != 0; i--, row++) {
-			System.out.println("--> Book titled '" + Book.bookArray[row][0] + "' that has ISBN# " + Book.bookArray[row][1] + " is due " + Book.bookArray[row][2]);
-		}
-		waitForKey();
+		System.out.print("Enter article name: ");
+		String name = input.nextLine();
+		System.out.print("Enter DOI number: ");
+		String doi = input.nextLine();
+		
+		OnlineArticle theArticle = new OnlineArticle(name, doi);
+		addToArticleArray(theArticle);
 	}
 	
-	private static void totalNumberOfBooksCheckedOut() {
-		System.out.println("Total number of books checked out: " + Book.bookCount);
-		waitForKey();
+	private static void addToArticleArray(OnlineArticle theArticle) {
+		OnlineArticle.articleArray[OnlineArticle.articleCount] = theArticle;
+		OnlineArticle.articleCount++;
+		System.out.println("Online Article added successfully! (" + OnlineArticle.articleCount + "/10 articles)");
 	}
 	
-	private static void changeDateFormat() {
-		System.out.print("Current format: ");
-		switch (Book.type) {
-		case MONTH_NAME:
-			System.out.println("DD <MONTH_NAME> YYYY");
-			break;
-		case MONTH_NUMBER:
-			System.out.println("DD/MM/YYYY");
-			break;
+	private static void createAccount() {
+		System.out.print("Enter account name: ");
+		String name = input.nextLine();
+		System.out.print("Enter account id: ");
+		int id = input.nextInt();
+		
+		Reader theReader = new Reader(name, id);
+		System.out.println("New user successfully created.");
+	}
+	
+	private static void checkOut() {
+		System.out.print("Enter your id: ");
+		int id = input.nextInt();
+		for (Reader reader : Reader.readerArray) {
+			if (id == reader.getId()) {
+				System.out.print("Welcome " + reader.getReaderName() + ", enter the ISBN of of the book you would like to check out: ");
+				String isbn = input.nextLine();
+				System.out.println("traversing books...");
+				for (Book book : Book.bookArray) {
+					if (isbn == book.getBookISBN()) {
+						System.out.println("Book found with name: " + book.getBookName());
+						int day, month, year;
+						System.out.print("Enter due year (YYYY): ");
+						year = input.nextInt();
+						System.out.print("Enter due month (MM): ");
+						month = input.nextInt();
+						System.out.print("Enter due day (DD): ");
+						day = input.nextInt();
+						if (Date.isDateValid(day, month, year)) {
+							Date dueDate = new Date(day, month, year);
+							book = new Book(book.getBookName(), book.getBookISBN(), dueDate);
+							reader.setCheckedOutBook(book);
+							System.out.println("The book with name '" + book.getBookName() + "' (ISBN#:" + book.getBookISBN() + ") is checked out by user " + reader.getReaderName() + ".");
+							return;
+						}
+						System.out.println("ERR: Invalid date.");
+						return;
+					}
+				}
+				System.out.println("ERR: There is no book with the ISBN#:" + isbn);
+				return;
+			}
 		}
-		System.out.print("Select the format you want (1 for numbered, 2 for with name):");
-		int choice = input.nextInt();
-		if (choice == 1) Book.type = Book.DATE_PRINT_TYPE.MONTH_NUMBER;
-		else if (choice == 2) Book.type = Book.DATE_PRINT_TYPE.MONTH_NAME;
-		else System.out.println("ERR: Invalid selection.");
+		System.out.println("ERR: There is no user with the ID:" + id);
+		return;
+	}
+	
+	private static void giveAccess() {
+		System.out.print("Enter your id: ");
+		int id = input.nextInt();
+		for (Reader reader : Reader.readerArray) {
+			if (id == reader.getId()) {
+				System.out.print("Welcome " + reader.getReaderName() + ", enter the DOI of of the article you would like to access: ");
+				String doi = input.nextLine();
+				System.out.println("traversing articles...");
+				for (OnlineArticle article : OnlineArticle.articleArray) {
+					if (doi == article.getArticleDOI()) {
+						System.out.println("Article found with name: " + article.getArticleName());
+						reader.setAccessedArticle(article);
+						System.out.println("The article with name '" + article.getArticleName() + "' (DOI#:" + article.getArticleDOI() + ") is accessed by user " + reader.getReaderName() + ".");
+						return;
+					}
+				}
+				System.out.println("ERR: There is no article with the DOI#:" + doi);
+				return;
+			}
+		}
+		System.out.println("ERR: There is no user with the ID:" + id);
+		return;
 	}
 	
 	private static void waitForKey() {
 		input.nextLine(); 
         input.nextLine();
-	}
-	
-	public static void start() {
-		int choice;
-		boolean terminate = false;
-		while (true) {
-			printMenu();
-			choice = input.nextInt();
-			switch (choice) {
-			case 1:
-				addNewBook();
-				break;
-			case 2:
-				displayBooks();
-				break;
-			case 3:
-				totalNumberOfBooksCheckedOut();
-				break;
-			case 4:
-				changeDateFormat();
-				break;
-			case 5:
-				System.out.println("Goodbye!");
-				terminate = true;
-				break;
-			}
-			if (terminate) break;
-		}
 	}
 }
