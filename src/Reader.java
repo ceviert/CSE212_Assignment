@@ -1,17 +1,18 @@
 public class Reader {
 
 	private String readerName;
-	private int id;
+	private long id;
 	private Book checkedOutBook;
 	private OnlineArticle accessedArticle;
-	public static Reader[] readerArray;
+	public static Reader[] readerArray = new Reader[10];
+	public static int readerCount = 0;
 	
-	public Reader(String readerName, int id) {
+	public Reader(String readerName, long id) {
 		this.readerName = readerName;
 		this.id = id;
 	}
 	
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 	

@@ -23,7 +23,7 @@ public class Menu {
 			printMenu();
 			choice = input.nextInt();
 			if (!(0 < choice && choice <= SUBMENU.values.length)) {
-				System.out.println("ERR: You've entered invalid choice, try again.");
+				System.out.println("ERR: You've entered invalid choice, try again. (1-6)");
 				continue;
 			}
 			SUBMENU selection = SUBMENU.values[choice];
@@ -44,6 +44,7 @@ public class Menu {
 				giveAccess();
 				break;
 			case EXIT:
+				System.out.println("Goodbye!");
 				terminate = true;
 				break;
 			}
@@ -87,7 +88,6 @@ public class Menu {
 			return;
 		}
 		Book theBook = new Book(name, isbn);
-		System.out.println(name + isbn);
 		addToBookArray(theBook);
 	}
 	
@@ -103,6 +103,7 @@ public class Menu {
 			return;
 		}
 		System.out.print("Enter article name: ");
+		input.nextLine(); // bugfix
 		String name = input.nextLine();
 		System.out.print("Enter DOI number: ");
 		String doi = input.nextLine();
@@ -119,24 +120,36 @@ public class Menu {
 	
 	private static void createAccount() {
 		System.out.print("Enter account name: ");
+		input.nextLine(); // bugfix
 		String name = input.nextLine();
 		System.out.print("Enter account id: ");
-		int id = input.nextInt();
+		long id = input.nextLong();
 		
 		Reader theReader = new Reader(name, id);
+		
+		Reader.readerArray[Reader.readerCount] = theReader;
+		Reader.readerCount++;
 		System.out.println("New user successfully created.");
 	}
 	
 	private static void checkOut() {
+		if (Book.bookCount == 0) {
+			System.out.println("WARN: There is no books in the library, add some and try again.");
+			waitForKey();
+			return;
+		}
 		System.out.print("Enter your id: ");
-		int id = input.nextInt();
+		long id = input.nextLong();
 		for (Reader reader : Reader.readerArray) {
+			if (reader == null) continue;
 			if (id == reader.getId()) {
 				System.out.print("Welcome " + reader.getReaderName() + ", enter the ISBN of of the book you would like to check out: ");
+				input.nextLine(); // bugfix
 				String isbn = input.nextLine();
 				System.out.println("traversing books...");
 				for (Book book : Book.bookArray) {
-					if (isbn == book.getBookISBN()) {
+					if (book == null) continue;
+					if (book.getBookISBN().equals(isbn)) {
 						System.out.println("Book found with name: " + book.getBookName());
 						int day, month, year;
 						System.out.print("Enter due year (YYYY): ");
@@ -165,15 +178,23 @@ public class Menu {
 	}
 	
 	private static void giveAccess() {
+		if (OnlineArticle.articleCount == 0) {
+			System.out.println("WARN: There is no articles in the library, add some and try again.");
+			waitForKey();
+			return;
+		}
 		System.out.print("Enter your id: ");
-		int id = input.nextInt();
+		long id = input.nextLong();
 		for (Reader reader : Reader.readerArray) {
+			if (reader == null) continue;
 			if (id == reader.getId()) {
 				System.out.print("Welcome " + reader.getReaderName() + ", enter the DOI of of the article you would like to access: ");
+				input.nextLine(); // bugfix
 				String doi = input.nextLine();
 				System.out.println("traversing articles...");
 				for (OnlineArticle article : OnlineArticle.articleArray) {
-					if (doi == article.getArticleDOI()) {
+					if (article == null) continue;
+					if (article.getArticleDOI().equals(doi)) {
 						System.out.println("Article found with name: " + article.getArticleName());
 						reader.setAccessedArticle(article);
 						System.out.println("The article with name '" + article.getArticleName() + "' (DOI#:" + article.getArticleDOI() + ") is accessed by user " + reader.getReaderName() + ".");
