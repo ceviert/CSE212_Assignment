@@ -29,16 +29,17 @@ public class Date {
 			System.out.println("ERR: Invalid month.");
 			return false;
 		}
-
-		if (!(1 <= d && d <= getMaxDays(m, y))) {
-			System.out.println("ERR: Invalid day.");
-			return false;
-		}
 		
 		if (!(1 <= y && y <= 9999)) {
 			System.out.println("ERR: Invalid year.");
 			return false;
 		}
+					
+		if (!(1 <= d && d <= getMaxDays(m, y))) {
+			System.out.println("ERR: Invalid day.");
+			return false;
+		}
+		
 		return true;
 	}
 	
