@@ -22,7 +22,7 @@ public class Menu {
 		while (true) {
 			printMenu();
 			choice = input.nextInt();
-			if (!(0 < choice && choice <= SUBMENU.values.length)) {
+			if (!(0 < choice && choice <= SUBMENU.values.length - 1)) {
 				System.out.println("ERR: You've entered invalid choice, try again. (1-6)");
 				continue;
 			}
@@ -61,9 +61,9 @@ public class Menu {
 	}
 	
 	private static void printMenu() {
-		System.out.println("===================================================");
-		System.out.println("                 WELCOME TO LIBMAN                 ");
-		System.out.println("===================================================");
+		System.out.println(" ===================================================");
+		System.out.println("|                 WELCOME TO LIBMAN                 |");
+		System.out.println(" ===================================================");
 		System.out.println("1. Add a new book");
 		System.out.println("2. Add a new online article");
 		System.out.println("3. Create a member account");
@@ -125,10 +125,10 @@ public class Menu {
 		System.out.print("Enter account id: ");
 		long id = input.nextLong();
 		
-		Reader theReader = new Reader(name, id);
+		RegularMember theReader = new RegularMember(name, id);
 		
-		Reader.readerArray[Reader.readerCount] = theReader;
-		Reader.readerCount++;
+		RegularMember.readerArray[RegularMember.readerCount] = theReader;
+		RegularMember.readerCount++;
 		System.out.println("New user successfully created.");
 	}
 	
@@ -140,7 +140,7 @@ public class Menu {
 		}
 		System.out.print("Enter your id: ");
 		long id = input.nextLong();
-		for (Reader reader : Reader.readerArray) {
+		for (RegularMember reader : RegularMember.readerArray) {
 			if (reader == null) continue;
 			if (id == reader.getId()) {
 				System.out.print("Welcome " + reader.getReaderName() + ", enter the ISBN of of the book you would like to check out: ");
@@ -185,7 +185,7 @@ public class Menu {
 		}
 		System.out.print("Enter your id: ");
 		long id = input.nextLong();
-		for (Reader reader : Reader.readerArray) {
+		for (RegularMember reader : RegularMember.readerArray) {
 			if (reader == null) continue;
 			if (id == reader.getId()) {
 				System.out.print("Welcome " + reader.getReaderName() + ", enter the DOI of of the article you would like to access: ");
@@ -210,6 +210,7 @@ public class Menu {
 	}
 	
 	private static void waitForKey() {
+		System.out.println("Hit enter to go back to main menu.");
 		input.nextLine(); 
         input.nextLine();
 	}
