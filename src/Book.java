@@ -25,4 +25,8 @@ public class Book {
 	public String getBookISBN() {
 		return isbn;
 	}
+	
+	public Date getDueDate() {
+		return dueDate;
+	}
 }
