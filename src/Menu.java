@@ -59,6 +59,10 @@ public class Menu {
 				System.out.println("Goodbye!");
 				terminate = true;
 				break;
+			case ZERO:
+				break;
+			default:
+				break;
 			}
 			if (terminate) break;
 		}
@@ -176,6 +180,8 @@ public class Menu {
 	private static void printAccountCreationMenu() {
 		System.out.println("Please enter the type of member you would like to create:");
 		System.out.println("1. Regular Member");
+		System.out.println("2. Student Member");
+		System.out.println("3. Academic Member");
 	}
 
 	private static void checkOut() {
