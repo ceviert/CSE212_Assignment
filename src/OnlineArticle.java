@@ -17,4 +17,21 @@ public class OnlineArticle {
 	public String getArticleName() {
 		return nameOfArticle;
 	}
+	
+	public static void addToArticleArray(OnlineArticle theArticle) {
+		articleArray[articleCount] = theArticle;
+		articleCount++;
+		System.out.println("Online Article added successfully! (" + articleCount + "/10 articles)");
+	}
+	
+	public static boolean isDOIValid(String doiInput) {
+			for (OnlineArticle article : articleArray) {
+				if (article == null) break;
+				if (article.DOI == doiInput) {
+					System.out.println("ERR: This DOI is NOT av available, select another.");
+					return false;
+				}
+			}
+			return true;
+	}
 }

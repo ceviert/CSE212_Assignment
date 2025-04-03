@@ -29,4 +29,25 @@ public class Book {
 	public Date getDueDate() {
 		return dueDate;
 	}
+	
+	public static void appendToBookArray(Book theBook) {
+		bookArray[bookCount] = theBook;
+		bookCount++;
+		System.out.println("Book added successfully! (" + bookCount + "/10 books)");
+	}
+	
+	public static boolean isISBNValid(String isbnInput) {
+		String part = isbnInput.substring(0, 4);
+		if (part.equals("978-")) {
+			for (Book book : bookArray) {
+				if (book == null) break;
+				if (book.isbn == isbnInput) {
+					System.out.println("ERR: This ISBN is NOT av available, select another.");
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
 }

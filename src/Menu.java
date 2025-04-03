@@ -73,14 +73,7 @@ public class Menu {
 			if (member == null) continue;
 			member.displayInfo();
 		}
-	}
-
-	private static boolean isISBNValid(String isbnInput) {
-		String part = isbnInput.substring(0, 4);
-		if (part.equals("978-")) {
-			return true;
-		}
-		return false;
+		waitForKey();
 	}
 	
 	private static void printMenu() {
@@ -107,18 +100,10 @@ public class Menu {
 		String name = input.nextLine();
 		System.out.print("Enter ISBN number:");
 		String isbn = input.nextLine();
-		if (!isISBNValid(isbn)) {
-			System.out.println("ERR: Invalid ISBN number.");
-			return;
-		}
+		if (!Book.isISBNValid(isbn)) return;
+		
 		Book theBook = new Book(name, isbn);
-		addToBookArray(theBook);
-	}
-	
-	private static void addToBookArray(Book theBook) {
-		Book.bookArray[Book.bookCount] = theBook;
-		Book.bookCount++;
-		System.out.println("Book added successfully! (" + Book.bookCount + "/10 books)");
+		Book.appendToBookArray(theBook);
 	}
 	
 	private static void addNewArticle() {
@@ -131,15 +116,10 @@ public class Menu {
 		String name = input.nextLine();
 		System.out.print("Enter DOI number: ");
 		String doi = input.nextLine();
+		if (!OnlineArticle.isDOIValid(doi)) return;
 		
 		OnlineArticle theArticle = new OnlineArticle(name, doi);
-		addToArticleArray(theArticle);
-	}
-	
-	private static void addToArticleArray(OnlineArticle theArticle) {
-		OnlineArticle.articleArray[OnlineArticle.articleCount] = theArticle;
-		OnlineArticle.articleCount++;
-		System.out.println("Online Article added successfully! (" + OnlineArticle.articleCount + "/10 articles)");
+		OnlineArticle.addToArticleArray(theArticle);
 	}
 	
 	private static void createAccount() {
@@ -150,12 +130,13 @@ public class Menu {
 			System.out.println("ERR: You've entered invalid choice. (1-3)");
 			return;
 		}
-		ACCOUNT_TYPES type = ACCOUNT_TYPES.values[choice];
+		ACCOUNT_TYPES type = ACCOUNT_TYPES.values[choice - 1];
 		System.out.print("Enter account name: ");
 		input.nextLine(); // bugfix
 		String name = input.nextLine();
 		System.out.print("Enter account id: ");
 		long id = input.nextLong();
+		if (!RegularMember.isIdAvailable(id)) return;
 		RegularMember theMember = null;
 		switch (type) {
 		case REGULAR:
@@ -195,6 +176,11 @@ public class Menu {
 		for (RegularMember member : RegularMember.memberArray) {
 			if (member == null) continue;
 			if (id == member.getId()) {
+				if (member.hasReachedBookLimit()) {
+					System.out.println("ERR: You've reached your account limit on books, consider upgrading your membership.");
+					waitForKey();
+					return;
+				}
 				System.out.print("Welcome " + member.getMemberName() + ", enter the ISBN of of the book you would like to check out: ");
 				input.nextLine(); // bugfix
 				String isbn = input.nextLine();
@@ -240,6 +226,10 @@ public class Menu {
 		for (RegularMember member : RegularMember.memberArray) {
 			if (member == null) continue;
 			if (id == member.getId()) {
+				if (member.hasReachedArticleLimit()) {
+					System.out.println("ERR: You've reached your account limit on online articles, consider upgrading your membership.");
+					return;
+				}
 				System.out.print("Welcome " + member.getMemberName() + ", enter the DOI of of the article you would like to access: ");
 				input.nextLine(); // bugfix
 				String doi = input.nextLine();
