@@ -41,8 +41,8 @@ public class Book {
 		if (part.equals("978-")) {
 			for (Book book : bookArray) {
 				if (book == null) break;
-				if (book.isbn == isbnInput) {
-					System.out.println("ERR: This ISBN is NOT av available, select another.");
+				if (book.isbn.equals(isbnInput)) {
+					System.out.println("ERR: This ISBN already exists in database, select another.");
 					return false;
 				}
 			}

@@ -44,8 +44,9 @@ public class RegularMember {
 		System.out.println(memberName + " (ID#:" + id + ") has access to the following online articles (" + accessibleOnlineArticleCount + "/" + limit + "):");
 		for (OnlineArticle article : accessedOnlineArticles) { 
 			if (article == null) continue;
-			System.out.println("Article entitled '" + article.getArticleName() + " with DOI#:" + article.getArticleDOI());
+			System.out.println("-> Article entitled '" + article.getArticleName() + " with DOI#:" + article.getArticleDOI());
 		}
+		System.out.println();
 	}
 	
 	public void appendToCheckedOutBooks(Book theBook) {
@@ -77,7 +78,7 @@ public class RegularMember {
 		for (RegularMember member : memberArray) {
 			if (member == null) break;
 			if (member.id == id) {
-				System.out.println("ERR: This id is NOT av available, select another.");
+				System.out.println("ERR: This id is NOT available, select another.");
 				return false;
 			}
 		}

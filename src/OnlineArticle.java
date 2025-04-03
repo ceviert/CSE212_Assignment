@@ -27,7 +27,7 @@ public class OnlineArticle {
 	public static boolean isDOIValid(String doiInput) {
 			for (OnlineArticle article : articleArray) {
 				if (article == null) break;
-				if (article.DOI == doiInput) {
+				if (article.DOI.equals(doiInput)) {
 					System.out.println("ERR: This DOI is NOT av available, select another.");
 					return false;
 				}

@@ -126,7 +126,7 @@ public class Menu {
 		int choice;
 		printAccountCreationMenu();
 		choice = input.nextInt();
-		if (!(0 < choice && choice <= ACCOUNT_TYPES.values.length - 1)) {
+		if (!(0 < choice && choice <= ACCOUNT_TYPES.values.length)) {
 			System.out.println("ERR: You've entered invalid choice. (1-3)");
 			return;
 		}
@@ -156,6 +156,8 @@ public class Menu {
 			break;
 		}
 		RegularMember.appendToMemberArray(theMember);
+		System.out.println();
+		waitForKey();
 	}
 	
 	private static void printAccountCreationMenu() {
@@ -163,6 +165,7 @@ public class Menu {
 		System.out.println("1. Regular Member");
 		System.out.println("2. Student Member");
 		System.out.println("3. Academic Member");
+		System.out.print(">");
 	}
 
 	private static void checkOut() {
@@ -181,7 +184,8 @@ public class Menu {
 					waitForKey();
 					return;
 				}
-				System.out.print("Welcome " + member.getMemberName() + ", enter the ISBN of of the book you would like to check out: ");
+				System.out.println("Welcome " + member.getMemberName());
+				System.out.print("Enter the ISBN of of the book you would like to check out: ");
 				input.nextLine(); // bugfix
 				String isbn = input.nextLine();
 				System.out.println("traversing books...");
@@ -230,7 +234,8 @@ public class Menu {
 					System.out.println("ERR: You've reached your account limit on online articles, consider upgrading your membership.");
 					return;
 				}
-				System.out.print("Welcome " + member.getMemberName() + ", enter the DOI of of the article you would like to access: ");
+				System.out.println("Welcome " + member.getMemberName());
+				System.out.print("Enter the DOI of of the article you would like to access: ");
 				input.nextLine(); // bugfix
 				String doi = input.nextLine();
 				System.out.println("traversing articles...");
