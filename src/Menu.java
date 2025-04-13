@@ -8,7 +8,9 @@ public class Menu {
 		ADD_NEW_ONLINE_ARTICLE,
 		CREATE_MEMBER_ACCOUNT,
 		CHECKOUT_BOOK,
+		RETURN_BOOK,
 		GIVE_ACCESS_TO_ONLINE_ARTICLE,
+		REVOKE_ACCESS_TO_ONLINE_ARTICLE,
 		DISPLAY_ALL_ACCOUNTS,
 		EXIT;
 		
@@ -49,8 +51,14 @@ public class Menu {
 			case CHECKOUT_BOOK: 
 				checkOut();
 				break;
+			case RETURN_BOOK:
+				returnBook();
+				break;
 			case GIVE_ACCESS_TO_ONLINE_ARTICLE:
 				giveAccess();
+				break;
+			case REVOKE_ACCESS_TO_ONLINE_ARTICLE:
+				revoke();
 				break;
 			case DISPLAY_ALL_ACCOUNTS:
 				displayAllAccounts();
@@ -61,18 +69,13 @@ public class Menu {
 				break;
 			case ZERO:
 				break;
-			default:
-				break;
 			}
 			if (terminate) break;
 		}
 	}
-	
+
 	private static void displayAllAccounts() {
-		for (RegularMember member : RegularMember.memberArray) {
-			if (member == null) continue;
-			member.displayInfo();
-		}
+		RegularMember.displayInfo();
 		waitForKey();
 	}
 	
@@ -84,17 +87,15 @@ public class Menu {
 		System.out.println("2. Add a new online article");
 		System.out.println("3. Create a member account");
 		System.out.println("4. Check out a book");
-		System.out.println("5. Give access to an online article");
-		System.out.println("6. Display all accounts");
-		System.out.println("7. Exit");
+		System.out.println("5. Return a book");
+		System.out.println("6. Give access to an online article");
+		System.out.println("7. End an online article access");
+		System.out.println("8. Display all accounts");
+		System.out.println("9. Exit");
 		System.out.print(">");
 	}
 	
 	private static void addNewBook() {
-		if (Book.bookCount == 10) {
-			System.out.println("Library is full! Cannot add more than 10 books.");
-			return;
-		}
 		System.out.print("Enter book name:");
 		input.nextLine(); // bugfix
 		String name = input.nextLine();
@@ -107,10 +108,6 @@ public class Menu {
 	}
 	
 	private static void addNewArticle() {
-		if (OnlineArticle.articleCount == 10) {
-			System.out.println("Library is full! Cannot add more than 10 articles.");
-			return;
-		}
 		System.out.print("Enter article name: ");
 		input.nextLine(); // bugfix
 		String name = input.nextLine();
@@ -169,88 +166,136 @@ public class Menu {
 	}
 
 	private static void checkOut() {
-		if (Book.bookCount == 0) {
-			System.out.println("WARN: There is no books in the library, add some and try again.");
+		if (Book.getBookArraySize() == 0) {
+			System.out.println("ERR: There is no books in the library, add some and try again.");
 			waitForKey();
 			return;
 		}
 		System.out.print("Enter your id: ");
 		long id = input.nextLong();
-		for (RegularMember member : RegularMember.memberArray) {
-			if (member == null) continue;
-			if (id == member.getId()) {
-				if (member.hasReachedBookLimit()) {
-					System.out.println("ERR: You've reached your account limit on books, consider upgrading your membership.");
-					waitForKey();
-					return;
-				}
-				System.out.println("Welcome " + member.getMemberName());
-				System.out.print("Enter the ISBN of of the book you would like to check out: ");
-				input.nextLine(); // bugfix
-				String isbn = input.nextLine();
-				System.out.println("traversing books...");
-				for (Book book : Book.bookArray) {
-					if (book == null) continue;
-					if (book.getBookISBN().equals(isbn)) {
-						System.out.println("Book found with name: " + book.getBookName());
-						int day, month, year;
-						System.out.print("Enter due year (YYYY): ");
-						year = input.nextInt();
-						System.out.print("Enter due month (MM): ");
-						month = input.nextInt();
-						System.out.print("Enter due day (DD): ");
-						day = input.nextInt();
-						if (Date.isDateValid(day, month, year)) {
-							Date dueDate = new Date(day, month, year);
-							book = new Book(book.getBookName(), book.getBookISBN(), dueDate);
-							member.appendToCheckedOutBooks(book);
-							System.out.println("The book with name '" + book.getBookName() + "' (ISBN#:" + book.getBookISBN() + ") is checked out by user " + member.getMemberName() + ".");
-							return;
-						}
-						System.out.println("ERR: Invalid date.");
-						return;
-					}
-				}
-				System.out.println("ERR: There is no book with the ISBN#:" + isbn);
+		RegularMember theMember = RegularMember.getMemberWithTheID(id);
+		if (theMember != null) {
+			if (theMember.hasReachedBookLimit()) {
+				System.out.println("ERR: You've reached your account limit on books, consider upgrading your membership.");
+				waitForKey();
 				return;
 			}
+			System.out.println("Welcome " + theMember.getMemberName());
+			System.out.print("Enter the ISBN of of the book you would like to check out: ");
+			input.nextLine(); // bugfix
+			String isbn = input.nextLine();
+			System.out.println("traversing books...");
+			Book theBook = Book.getBookWithTheISBN(isbn);
+			if (theBook != null) {
+				System.out.println("Book found with name: " + theBook.getBookName());
+				int day, month, year;
+				System.out.print("Enter due year (YYYY): ");
+				year = input.nextInt();
+				System.out.print("Enter due month (MM): ");
+				month = input.nextInt();
+				System.out.print("Enter due day (DD): ");
+				day = input.nextInt();
+				if (Date.isDateValid(day, month, year)) {
+					Date dueDate = new Date(day, month, year);
+					theBook = new Book(theBook.getBookName(), theBook.getBookISBN(), dueDate);
+					theMember.appendToCheckedOutBooks(theBook);
+					Book.removeFromBookArray(theBook);
+					System.out.println("The book with name '" + theBook.getBookName() + "' (ISBN#:" + theBook.getBookISBN() + ") is checked out by user " + theMember.getMemberName() + ".");
+					return;
+				}
+				System.out.println("ERR: Invalid date.");
+				return;
+			}
+			System.out.println("ERR: There is no book with the ISBN#:" + isbn);
+			return;
 		}
 		System.out.println("ERR: There is no user with the ID:" + id);
 		return;
 	}
 	
+	private static void returnBook() {
+		System.out.print("Enter your id: ");
+		long id = input.nextLong();
+		RegularMember theMember = RegularMember.getMemberWithTheID(id);
+		if (theMember != null) {
+			if (theMember.getCheckedOutBooksSize() == 0) {
+				System.out.println("ERR: You don't have any checked book(s).");
+				waitForKey();
+				return;
+			}
+			System.out.println("Welcome " + theMember.getMemberName());
+			System.out.print("Enter the ISBN of of the book you would like to return: ");
+			input.nextLine(); // bugfix
+			String isbn = input.nextLine();
+			System.out.println("traversing your books...");
+			if (theMember.returnBook(isbn)) {
+				Book returnedBook = Book.getBookWithTheISBN(isbn);
+				System.out.println("The book with the name '" + returnedBook.getBookName() + "' (ISBN#:" + returnedBook.getBookISBN() + ") is returned by user " + theMember.getMemberName() + ".");
+				return;
+			}
+			System.out.println("ERR: There is no book with the ISBN#:" + isbn);
+			return;
+		}
+		System.out.println("ERR: There is no user with the ID:" + id);
+		return;
+	}
+
 	private static void giveAccess() {
-		if (OnlineArticle.articleCount == 0) {
+		if (OnlineArticle.getArticleArraySize() == 0) {
 			System.out.println("WARN: There is no articles in the library, add some and try again.");
 			waitForKey();
 			return;
 		}
 		System.out.print("Enter your id: ");
 		long id = input.nextLong();
-		for (RegularMember member : RegularMember.memberArray) {
-			if (member == null) continue;
-			if (id == member.getId()) {
-				if (member.hasReachedArticleLimit()) {
-					System.out.println("ERR: You've reached your account limit on online articles, consider upgrading your membership.");
-					return;
-				}
-				System.out.println("Welcome " + member.getMemberName());
-				System.out.print("Enter the DOI of of the article you would like to access: ");
-				input.nextLine(); // bugfix
-				String doi = input.nextLine();
-				System.out.println("traversing articles...");
-				for (OnlineArticle article : OnlineArticle.articleArray) {
-					if (article == null) continue;
-					if (article.getArticleDOI().equals(doi)) {
-						System.out.println("Article found with name: " + article.getArticleName());
-						member.appendToAccessedOnlineArticles(article);
-						System.out.println("The article with name '" + article.getArticleName() + "' (DOI#:" + article.getArticleDOI() + ") is accessed by user " + member.getMemberName() + ".");
-						return;
-					}
-				}
-				System.out.println("ERR: There is no article with the DOI#:" + doi);
+		RegularMember theMember = RegularMember.getMemberWithTheID(id);
+		if (theMember != null) {
+			if (theMember.hasReachedArticleLimit()) {
+				System.out.println("ERR: You've reached your account limit on online articles, consider upgrading your membership.");
 				return;
 			}
+			System.out.println("Welcome " + theMember.getMemberName());
+			System.out.print("Enter the DOI of of the article you would like to access: ");
+			input.nextLine(); // bugfix
+			String doi = input.nextLine();
+			System.out.println("traversing articles...");
+			OnlineArticle theArticle = OnlineArticle.getArticleWithTheDOI(doi);
+			if (theArticle != null) {
+				System.out.println("Article found with name: " + theArticle.getArticleName());
+				theMember.appendToAccessedOnlineArticles(theArticle);
+				OnlineArticle.removeFromArticleArray(theArticle);
+				System.out.println("The article with name '" + theArticle.getArticleName() + "' (DOI#:" + theArticle.getArticleDOI() + ") is accessed by user " + theMember.getMemberName() + ".");
+				return;
+			}
+			System.out.println("ERR: There is no article with the DOI#:" + doi);
+			return;
+		}
+		System.out.println("ERR: There is no user with the ID:" + id);
+		return;
+	}
+	
+	private static void revoke() {
+		System.out.print("Enter your id: ");
+		long id = input.nextLong();
+		RegularMember theMember = RegularMember.getMemberWithTheID(id);
+		if (theMember != null) {
+			if (theMember.getAccessedOnlineArticlesSize() == 0) {
+				System.out.println("ERR: You don't have any accessed online article(s).");
+				waitForKey();
+				return;
+			}
+			System.out.println("Welcome " + theMember.getMemberName());
+			System.out.print("Enter the DOI of the article you would like to remove from your account: ");
+			input.nextLine();
+			String doi = input.nextLine();
+			System.out.println("traversing your articles...");
+			if (theMember.returnOA(doi)) {
+				OnlineArticle returnedOA = OnlineArticle.getArticleWithTheDOI(doi);
+				System.out.println("The article with the name '" + returnedOA.getArticleName() + "' (DOI#:" + returnedOA.getArticleDOI() + ") is removed from user " + theMember.getMemberName() + ".");
+				return;
+			}
+			System.out.println("ERR: There is no article with the DOI#:" + doi);
+			return;
 		}
 		System.out.println("ERR: There is no user with the ID:" + id);
 		return;

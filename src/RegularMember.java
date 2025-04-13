@@ -1,21 +1,24 @@
+import java.util.ArrayList;
+import java.util.Iterator;
+
 public class RegularMember {
 
 	private String memberName;
 	private long id;
-	final private int limit = 1;
-	protected Book[] checkedOutBooks;
-	protected OnlineArticle[] accessedOnlineArticles;
-	protected int checkedOutBookCount = 0;
-	protected int accessibleOnlineArticleCount = 0;
-	public static RegularMember[] memberArray = new RegularMember[10];
-	private static int memberCount = 0;
+	protected int limit = 1;
+	
+	private ArrayList<Book> checkedOutBooks = new ArrayList<Book>();;
+	private Iterator<Book> checkedOutBookIterator;
+	
+	private ArrayList<OnlineArticle> accessedOnlineArticles = new ArrayList<OnlineArticle>();;
+	private Iterator<OnlineArticle> accessedOnlineArticleIterator;
+	
+	private static ArrayList<RegularMember> memberArray = new ArrayList<RegularMember>();
+	public static Iterator<RegularMember> memberIterator;
 	
 	public RegularMember(String memberName, long id) {
 		this.memberName = memberName;
 		this.id = id;
-		
-		checkedOutBooks = new Book[1];
-		accessedOnlineArticles = new OnlineArticle[1];
 	}
 	
 	public long getId() {
@@ -26,13 +29,58 @@ public class RegularMember {
 		return memberName;
 	}
 	
-	public void displayInfo() {
-		if (checkedOutBookCount != 0) printMemberBooks();
-		if (accessibleOnlineArticleCount != 0) printMemberArticles();
+	public int getCheckedOutBooksSize() {
+		return checkedOutBooks.size();
+	}
+	
+	public int getAccessedOnlineArticlesSize() {
+		return accessedOnlineArticles.size();
+	}
+	
+	public static RegularMember getMemberWithTheID(long id) {
+		memberIterator = memberArray.iterator();
+		while (memberIterator.hasNext()) {
+			RegularMember theMember = memberIterator.next();
+			if (theMember.id == id) {
+				return theMember;
+			}
+		}
+		return null;
+	}
+	
+	public Book getBookWithTheISBN(String ISBN) {
+		checkedOutBookIterator = checkedOutBooks.iterator();
+		while (checkedOutBookIterator.hasNext()) {
+			Book theBook = checkedOutBookIterator.next();
+			if (theBook.getBookISBN().equals(ISBN)) {
+				return theBook;
+			}
+		}
+		return null;
+	}
+	
+	public OnlineArticle getArticleWithTheDOI(String DOI) {
+		accessedOnlineArticleIterator = accessedOnlineArticles.iterator();
+		while (accessedOnlineArticleIterator.hasNext()) {
+			OnlineArticle theArticle = accessedOnlineArticleIterator.next();
+			if (theArticle.getArticleDOI().equals(DOI)) {
+				return theArticle;
+			}
+		}
+		return null;
+	}
+	
+	public static void displayInfo() {
+		memberIterator = memberArray.iterator();
+		while (RegularMember.memberIterator.hasNext()) {
+			RegularMember theMember = RegularMember.memberIterator.next();
+			if (theMember.getCheckedOutBooksSize() != 0) theMember.printMemberBooks();
+			if (theMember.getAccessedOnlineArticlesSize() != 0) theMember.printMemberArticles();
+		}
 	}
 	
 	private void printMemberBooks() {
-		System.out.println(memberName + " (ID#:" + id + ") has the following books checked out (" + checkedOutBookCount + "/" + limit + "):");
+		System.out.println(memberName + " (ID#:" + id + ") has the following books checked out (" + checkedOutBooks.size()+ "/" + limit + "):");
 		for (Book book : checkedOutBooks) { 
 			if (book == null) continue;
 			System.out.println("-> Book titled '" + book.getBookName() + "' (ISBN#:" + book.getBookISBN() + ") till " + book.getDueDate().getFormattedText() + ".");
@@ -41,7 +89,7 @@ public class RegularMember {
 	}
 	
 	private void printMemberArticles() {
-		System.out.println(memberName + " (ID#:" + id + ") has access to the following online articles (" + accessibleOnlineArticleCount + "/" + limit + "):");
+		System.out.println(memberName + " (ID#:" + id + ") has access to the following online articles (" + accessedOnlineArticles.size() + "/" + limit + "):");
 		for (OnlineArticle article : accessedOnlineArticles) { 
 			if (article == null) continue;
 			System.out.println("-> Article entitled '" + article.getArticleName() + " with DOI#:" + article.getArticleDOI());
@@ -50,38 +98,84 @@ public class RegularMember {
 	}
 	
 	public void appendToCheckedOutBooks(Book theBook) {
-		checkedOutBooks[checkedOutBookCount] = theBook;
-		checkedOutBookCount++;
+		checkedOutBooks.add(theBook);
 	}
 	
 	public void appendToAccessedOnlineArticles(OnlineArticle theArticle) {
-		accessedOnlineArticles[accessibleOnlineArticleCount] = theArticle;
-		accessibleOnlineArticleCount++;
+		accessedOnlineArticles.add(theArticle);
 	}
 	
 	public static void appendToMemberArray(RegularMember theMember) {
-		memberArray[memberCount] = theMember;
-		memberCount++;
+		memberArray.add(theMember);
 	}
 	
 	public boolean hasReachedBookLimit() {
-		if (checkedOutBookCount == limit) return true;
+		if (checkedOutBooks.size() == limit) return true;
 		return false;
 	}
 	
 	public boolean hasReachedArticleLimit() {
-		if (accessibleOnlineArticleCount == limit) return true;
+		if (accessedOnlineArticles.size() == limit) return true;
 		return false;
 	}
 	
 	public static boolean isIdAvailable(long id) {
-		for (RegularMember member : memberArray) {
-			if (member == null) break;
-			if (member.id == id) {
+		memberIterator = memberArray.iterator();
+		while (memberIterator.hasNext()) {
+			RegularMember theMember = memberIterator.next();
+			if (theMember.id == id) {
 				System.out.println("ERR: This id is NOT available, select another.");
 				return false;
 			}
 		}
 		return true;
+	}
+	
+	public boolean checkOutBook(String ISBN) {
+		Iterator<Book> bookIterator = Book.bookArray.iterator();
+		while (bookIterator.hasNext()) {
+			Book theBook = bookIterator.next();
+			if (theBook.getBookISBN().equals(ISBN)) {
+				appendToCheckedOutBooks(theBook);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean returnBook(String ISBN) {
+		checkedOutBookIterator = checkedOutBooks.iterator();
+		while (checkedOutBookIterator.hasNext()) {
+			Book theBook = checkedOutBookIterator.next();
+			if (theBook.getBookISBN().equals(ISBN)) {
+				checkedOutBookIterator.remove();
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean accessOA(String DOI) {
+		Iterator<OnlineArticle> articleIterator = OnlineArticle.articleArray.iterator();
+		while (articleIterator.hasNext()) {
+			OnlineArticle theArticle = articleIterator.next();
+			if (theArticle.getArticleDOI().equals(DOI)) {
+				appendToAccessedOnlineArticles(theArticle);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean returnOA(String DOI) {
+		accessedOnlineArticleIterator = accessedOnlineArticles.iterator();
+		while (accessedOnlineArticleIterator.hasNext()) {
+			OnlineArticle theArticle = accessedOnlineArticleIterator.next();
+			if (theArticle.getArticleDOI().equals(DOI)) {
+				accessedOnlineArticleIterator.remove();
+				return true;
+			}
+		}
+		return false;
 	}
 }

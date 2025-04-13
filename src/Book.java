@@ -1,10 +1,29 @@
+import java.util.ArrayList;
+import java.util.Iterator;
+
 public class Book {
 	
 	private String name;
 	private String isbn;
 	private Date dueDate;
-	public static Book[] bookArray = new Book[10];
-	public static int bookCount = 0;
+	
+	public static ArrayList<Book> bookArray = new ArrayList<Book>();
+	public static Iterator<Book> bookIterator;
+	
+	public static Book getBookWithTheISBN(String ISBN) {
+		bookIterator = bookArray.iterator();
+		while (bookIterator.hasNext()) {
+			Book theBook = bookIterator.next();
+			if (theBook.isbn.equals(ISBN)) {
+				return theBook;
+			}
+		}
+		return null;
+	}
+	
+	public static int getBookArraySize() {
+		return bookArray.size();
+	}
 	
 	public Book(String name, String isbn) {
 		this.name = name;
@@ -31,9 +50,18 @@ public class Book {
 	}
 	
 	public static void appendToBookArray(Book theBook) {
-		bookArray[bookCount] = theBook;
-		bookCount++;
-		System.out.println("Book added successfully! (" + bookCount + "/10 books)");
+		bookArray.add(theBook);
+		System.out.println("Book added successfully!.");
+	}
+	
+	public static void removeFromBookArray(Book book) {
+		while (bookIterator.hasNext()) {
+			Book theBook = bookIterator.next();
+			if (theBook.isbn.equals(book.isbn)) {
+				bookIterator.remove();
+				System.out.println("book rm success"); // to be deleted
+			}
+		}
 	}
 	
 	public static boolean isISBNValid(String isbnInput) {
