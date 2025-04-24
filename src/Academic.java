@@ -1,4 +1,4 @@
-public class Academic extends RegularMember{
+public class Academic extends RegularMember {
 
 	public Academic(String memberName, long id) {
 		super(memberName, id);

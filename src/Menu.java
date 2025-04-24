@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class Menu {
+public abstract class Menu { // can be abstract since i wont be creating any Menu instances???
 	
 	private static enum SUBMENU {
 		ZERO,
@@ -12,6 +12,7 @@ public class Menu {
 		GIVE_ACCESS_TO_ONLINE_ARTICLE,
 		REVOKE_ACCESS_TO_ONLINE_ARTICLE,
 		DISPLAY_ALL_ACCOUNTS,
+		DISPLAY_LIBRARY_DATABASE,
 		EXIT;
 		
 		private static SUBMENU[] values = SUBMENU.values();
@@ -27,7 +28,7 @@ public class Menu {
 	
 	static Scanner input = new Scanner(System.in);
 	
-	public static void start() {
+	public static void start() { // main menu method
 		int choice;
 		boolean terminate = false;
 		while (true) {
@@ -63,6 +64,9 @@ public class Menu {
 			case DISPLAY_ALL_ACCOUNTS:
 				displayAllAccounts();
 				break;
+			case DISPLAY_LIBRARY_DATABASE:
+				displayDatabase();
+				break;
 			case EXIT:
 				System.out.println("Goodbye!");
 				terminate = true;
@@ -80,18 +84,23 @@ public class Menu {
 	}
 	
 	private static void printMenu() {
-		System.out.println(" ===================================================");
-		System.out.println("|                 WELCOME TO LIBMAN                 |");
-		System.out.println(" ===================================================");
-		System.out.println("1. Add a new book");
-		System.out.println("2. Add a new online article");
-		System.out.println("3. Create a member account");
-		System.out.println("4. Check out a book");
-		System.out.println("5. Return a book");
-		System.out.println("6. Give access to an online article");
-		System.out.println("7. End an online article access");
-		System.out.println("8. Display all accounts");
-		System.out.println("9. Exit");
+		System.out.println("╔═══════════════════════════════════════════════════╗");
+		System.out.println("║                 WELCOME TO LIBMAN                 ║");
+		System.out.println("║───────────────────────────────────────────────────║");
+		System.out.printf("║ @ceviert %40s ║\n", Date.getLocalDate());
+		System.out.println("╠═══════════════════════════════════════════════════╣");
+		System.out.println("║                                                   ║");
+		System.out.println("║ 1. Add a new book                                 ║");
+		System.out.println("║ 2. Add a new online article                       ║");
+		System.out.println("║ 3. Create a member account                        ║");
+		System.out.println("║ 4. Check out a book                               ║");
+		System.out.println("║ 5. Return a book                                  ║");
+		System.out.println("║ 6. Give access to an online article               ║");
+		System.out.println("║ 7. End an online article access                   ║");
+		System.out.println("║ 8. Display all accounts                           ║");
+		System.out.println("║ 9. Display library database                       ║");
+		System.out.println("║ 10. Exit                                          ║");
+		System.out.println("╚═══════════════════════════════════════════════════╝");
 		System.out.print(">");
 	}
 	
@@ -102,8 +111,10 @@ public class Menu {
 		System.out.print("Enter ISBN number:");
 		String isbn = input.nextLine();
 		if (!Book.isISBNValid(isbn)) return;
+		System.out.print("Enter price:");
+		int price = input.nextInt();
 		
-		Book theBook = new Book(name, isbn);
+		Book theBook = new Book(name, isbn, price);
 		Book.appendToBookArray(theBook);
 	}
 	
@@ -114,8 +125,10 @@ public class Menu {
 		System.out.print("Enter DOI number: ");
 		String doi = input.nextLine();
 		if (!OnlineArticle.isDOIValid(doi)) return;
+		System.out.print("Enter publisher: ");
+		String publisher = input.nextLine();
 		
-		OnlineArticle theArticle = new OnlineArticle(name, doi);
+		OnlineArticle theArticle = new OnlineArticle(name, doi, publisher);
 		OnlineArticle.addToArticleArray(theArticle);
 	}
 	
@@ -197,19 +210,22 @@ public class Menu {
 				day = input.nextInt();
 				if (Date.isDateValid(day, month, year)) {
 					Date dueDate = new Date(day, month, year);
-					theBook = new Book(theBook.getBookName(), theBook.getBookISBN(), dueDate);
+					theBook = new Book(theBook.getBookName(), theBook.getBookISBN(), dueDate, theBook.getPrice());
 					theMember.appendToCheckedOutBooks(theBook);
 					Book.removeFromBookArray(theBook);
 					System.out.println("The book with name '" + theBook.getBookName() + "' (ISBN#:" + theBook.getBookISBN() + ") is checked out by user " + theMember.getMemberName() + ".");
 					return;
 				}
 				System.out.println("ERR: Invalid date.");
+				waitForKey();
 				return;
 			}
 			System.out.println("ERR: There is no book with the ISBN#:" + isbn);
+			waitForKey();
 			return;
 		}
 		System.out.println("ERR: There is no user with the ID:" + id);
+		waitForKey();
 		return;
 	}
 	
@@ -234,9 +250,11 @@ public class Menu {
 				return;
 			}
 			System.out.println("ERR: There is no book with the ISBN#:" + isbn);
+			waitForKey();
 			return;
 		}
 		System.out.println("ERR: There is no user with the ID:" + id);
+		waitForKey();
 		return;
 	}
 
@@ -262,15 +280,18 @@ public class Menu {
 			OnlineArticle theArticle = OnlineArticle.getArticleWithTheDOI(doi);
 			if (theArticle != null) {
 				System.out.println("Article found with name: " + theArticle.getArticleName());
+				theArticle.setAccessDate();
 				theMember.appendToAccessedOnlineArticles(theArticle);
 				OnlineArticle.removeFromArticleArray(theArticle);
 				System.out.println("The article with name '" + theArticle.getArticleName() + "' (DOI#:" + theArticle.getArticleDOI() + ") is accessed by user " + theMember.getMemberName() + ".");
 				return;
 			}
 			System.out.println("ERR: There is no article with the DOI#:" + doi);
+			waitForKey();
 			return;
 		}
 		System.out.println("ERR: There is no user with the ID:" + id);
+		waitForKey();
 		return;
 	}
 	
@@ -295,10 +316,17 @@ public class Menu {
 				return;
 			}
 			System.out.println("ERR: There is no article with the DOI#:" + doi);
+			waitForKey();
 			return;
 		}
 		System.out.println("ERR: There is no user with the ID:" + id);
+		waitForKey();
 		return;
+	}
+	
+	private static void displayDatabase() {
+		LibraryMaterial.displayDatabase();
+		waitForKey();
 	}
 	
 	private static void waitForKey() {

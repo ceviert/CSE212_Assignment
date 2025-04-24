@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+
 public class Date {
 
 	private int day;   // 1-28 or 29 or 30 or 31 depending on month and year
@@ -10,18 +12,27 @@ public class Date {
 		JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER
 	}
 	
-	MONTH[] months = MONTH.values(); // array to hold months
+	private MONTH[] months = MONTH.values(); // array to hold months
 	
 	public Date() {
 		this(1, 1, 2000);
 	}
 	
 	public Date(int day, int month, int year) {
-		setDate(day, month, year);
+		this.day = day;
+		this.month = month;
+		this.year = year;
 	}
 	
 	public Date(int day, MONTH month, int year) {
-		setDate(day, month.ordinal(), year);
+		this.day = day;
+		this.month = month.ordinal();
+		this.year = year;
+	}
+	
+	public static Date getLocalDate() {
+		LocalDate currentDate = LocalDate.now();
+		return new Date(currentDate.getDayOfMonth(), currentDate.getMonthValue(), currentDate.getYear());
 	}
 	
 	public static boolean isDateValid(int d, int m, int y) {
@@ -41,12 +52,6 @@ public class Date {
 		}
 		
 		return true;
-	}
-	
-	private void setDate(int day, int month, int year) {
-		this.day = day;
-		this.month = month;
-		this.year = year;
 	}
 	
 	private static int getMaxDays(int month, int year) {
@@ -93,6 +98,22 @@ public class Date {
 		}
 	}
 	
+	private static int toDays(Date theDate) {
+		int days = 365 * theDate.year;
+		
+		for (int i = 1; i <= theDate.month; i++) {
+			days += getMaxDays(i, theDate.year);
+		}
+        
+        return days;
+	}
+	
+	public static int dayDiff(Date date1, Date date2) {
+		int days1 = toDays(date1);
+		int days2 = toDays(date2);
+		return days1 - days2;
+	}
+	
 	// return 02 if 2
 	public static String handleNumber(int num) {
 		if (num < 10) return "0" + num;
@@ -103,7 +124,7 @@ public class Date {
 		System.out.println(day + " " + getMonthName(months[month]) + " " + year);
 	}
 	
-	public String getFormattedText() {
+	public String toString() {
 		return day + " " + getMonthName(months[month]) + " " + year;
 	}
 	
@@ -111,7 +132,7 @@ public class Date {
 		System.out.println(handleNumber(day) + "/" + handleNumber(month) + "/" + year);
 	}
 	
-	public String getFormattedNumbered() {
+	public String toStringNumbered() {
 		return handleNumber(day) + "/" + handleNumber(month) + "/" + year;
 	}
 	

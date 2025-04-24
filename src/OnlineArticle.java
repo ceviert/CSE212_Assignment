@@ -1,10 +1,14 @@
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class OnlineArticle {
+public class OnlineArticle extends LibraryMaterial {
 
 	private String nameOfArticle;
 	private String DOI;
+	private int price;
+	
+	private String publisher;
+	private Date accessDate;
 	
 	public static ArrayList<OnlineArticle> articleArray = new ArrayList<OnlineArticle>();
 	public static Iterator<OnlineArticle> articleIterator;
@@ -24,9 +28,13 @@ public class OnlineArticle {
 		return articleArray.size();
 	}
 	
-	public OnlineArticle(String nameOfArticle, String DOI) {
+	public OnlineArticle(String nameOfArticle, String DOI, String publisher) {
 		this.nameOfArticle = nameOfArticle;
 		this.DOI = DOI;
+		this.publisher = publisher;
+		if (publisher.equals("ACM")) price = 150;
+		else if (publisher.equals("IEEE")) price = 200;
+		else price = 100;
 	}
 	
 	public String getArticleDOI() {
@@ -35,6 +43,18 @@ public class OnlineArticle {
 	
 	public String getArticleName() {
 		return nameOfArticle;
+	}
+	
+	public Date getAccessDate() {
+		return accessDate;
+	}
+	
+	public int getArticlePrice() {
+		return price;
+	}
+	
+	public void setAccessDate() {
+		accessDate = Date.getLocalDate();
 	}
 	
 	public static void addToArticleArray(OnlineArticle theArticle) {
@@ -62,5 +82,16 @@ public class OnlineArticle {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public double calculateCost() {
+		int overdue = Date.dayDiff(accessDate, Date.getLocalDate());
+		if  (overdue >= 30) return overdue * 10;
+		return 0;
+	}
+	
+	public String toString() {
+		return String.format("Article Name: " + nameOfArticle + "\nDOI: " + DOI + "\nThe cost is: " + price + "\n");
 	}
 }

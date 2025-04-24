@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class RegularMember {
+public class RegularMember implements LibraryData {
 
 	private String memberName;
 	private long id;
@@ -74,25 +74,27 @@ public class RegularMember {
 		memberIterator = memberArray.iterator();
 		while (RegularMember.memberIterator.hasNext()) {
 			RegularMember theMember = RegularMember.memberIterator.next();
+			System.out.println("Member " + theMember.memberName + "(ID:" + theMember.id + ");");
 			if (theMember.getCheckedOutBooksSize() != 0) theMember.printMemberBooks();
 			if (theMember.getAccessedOnlineArticlesSize() != 0) theMember.printMemberArticles();
+			else if (theMember.getAccessedOnlineArticlesSize() == 0 & theMember.getCheckedOutBooksSize() == 0) {
+				System.out.println("(NO DATA)");
+			}
 		}
 	}
 	
 	private void printMemberBooks() {
-		System.out.println(memberName + " (ID#:" + id + ") has the following books checked out (" + checkedOutBooks.size()+ "/" + limit + "):");
+		System.out.println("has the following books checked out (" + checkedOutBooks.size()+ "/" + limit + "):");
 		for (Book book : checkedOutBooks) { 
-			if (book == null) continue;
-			System.out.println("-> Book titled '" + book.getBookName() + "' (ISBN#:" + book.getBookISBN() + ") till " + book.getDueDate().getFormattedText() + ".");
+			System.out.println("-> Book titled '" + book.getBookName() + "' (ISBN#:" + book.getBookISBN() + ") till " + book.getDueDate() + " with an overdue charge of " + book.calculateCost());
 		}
 		System.out.println();
 	}
 	
 	private void printMemberArticles() {
-		System.out.println(memberName + " (ID#:" + id + ") has access to the following online articles (" + accessedOnlineArticles.size() + "/" + limit + "):");
+		System.out.println("has access to the following online articles (" + accessedOnlineArticles.size() + "/" + limit + "):");
 		for (OnlineArticle article : accessedOnlineArticles) { 
-			if (article == null) continue;
-			System.out.println("-> Article entitled '" + article.getArticleName() + " with DOI#:" + article.getArticleDOI());
+			System.out.println("-> Article entitled '" + article.getArticleName() + " with DOI#:" + article.getArticleDOI() + " since " + article.getAccessDate() + " with an overdue charge of " + article.calculateCost());
 		}
 		System.out.println();
 	}
@@ -177,5 +179,17 @@ public class RegularMember {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public double calculateCost() {
+		int total = 0;
+		for (Book book : checkedOutBooks) {
+			total += book.calculateCost();
+		}
+		for (OnlineArticle article : accessedOnlineArticles) {
+			total += article.calculateCost();
+		}
+		return total;
 	}
 }
