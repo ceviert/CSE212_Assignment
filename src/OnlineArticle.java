@@ -63,13 +63,7 @@ public class OnlineArticle extends LibraryMaterial {
 	}
 	
 	public static void removeFromArticleArray(OnlineArticle article) {
-		while (articleIterator.hasNext()) {
-			OnlineArticle theArticle = articleIterator.next();
-			if (theArticle.DOI.equals(article.DOI)) {
-				articleIterator.remove();
-				System.out.println("article rm success");
-			}
-		}
+		articleArray.remove(article);
 	}
 	
 	public static boolean isDOIValid(String DOI) {

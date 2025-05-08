@@ -13,6 +13,7 @@ public abstract class Menu { // can be abstract since i wont be creating any Men
 		REVOKE_ACCESS_TO_ONLINE_ARTICLE,
 		DISPLAY_ALL_ACCOUNTS,
 		DISPLAY_LIBRARY_DATABASE,
+		MEMBERS_WITH_OVERDUE_DESCENDING,
 		EXIT;
 		
 		private static SUBMENU[] values = SUBMENU.values();
@@ -67,6 +68,9 @@ public abstract class Menu { // can be abstract since i wont be creating any Men
 			case DISPLAY_LIBRARY_DATABASE:
 				displayDatabase();
 				break;
+			case MEMBERS_WITH_OVERDUE_DESCENDING:
+				descendingOverdue();
+				break;
 			case EXIT:
 				System.out.println("Goodbye!");
 				terminate = true;
@@ -90,16 +94,17 @@ public abstract class Menu { // can be abstract since i wont be creating any Men
 		System.out.printf("║ @ceviert %40s ║\n", Date.getLocalDate());
 		System.out.println("╠═══════════════════════════════════════════════════╣");
 		System.out.println("║                                                   ║");
-		System.out.println("║ 1. Add a new book                                 ║");
-		System.out.println("║ 2. Add a new online article                       ║");
-		System.out.println("║ 3. Create a member account                        ║");
-		System.out.println("║ 4. Check out a book                               ║");
-		System.out.println("║ 5. Return a book                                  ║");
-		System.out.println("║ 6. Give access to an online article               ║");
-		System.out.println("║ 7. End an online article access                   ║");
-		System.out.println("║ 8. Display all accounts                           ║");
-		System.out.println("║ 9. Display library database                       ║");
-		System.out.println("║ 10. Exit                                          ║");
+		System.out.println("║ 1.  Add a new book                                ║");
+		System.out.println("║ 2.  Add a new online article                      ║");
+		System.out.println("║ 3.  Create a member account                       ║");
+		System.out.println("║ 4.  Check out a book                              ║");
+		System.out.println("║ 5.  Return a book                                 ║");
+		System.out.println("║ 6.  Give access to an online article              ║");
+		System.out.println("║ 7.  End an online article access                  ║");
+		System.out.println("║ 8.  Display all accounts                          ║");
+		System.out.println("║ 9.  Display library database                      ║");
+		System.out.println("║ 10. Members with overdue payments (descending)    ║");
+		System.out.println("║ 11. Exit                                          ║");
 		System.out.println("╚═══════════════════════════════════════════════════╝");
 		System.out.print(">");
 	}
@@ -326,6 +331,11 @@ public abstract class Menu { // can be abstract since i wont be creating any Men
 	
 	private static void displayDatabase() {
 		LibraryMaterial.displayDatabase();
+		waitForKey();
+	}
+	
+	private static void descendingOverdue() {
+		RegularMember.printAllTotalOverdue();
 		waitForKey();
 	}
 	

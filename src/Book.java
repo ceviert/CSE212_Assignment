@@ -63,13 +63,8 @@ public class Book extends LibraryMaterial {
 	}
 	
 	public static void removeFromBookArray(Book book) {
-		while (bookIterator.hasNext()) {
-			Book theBook = bookIterator.next();
-			if (theBook.isbn.equals(book.isbn)) {
-				bookIterator.remove();
-				System.out.println("book rm success"); // to be deleted
-			}
-		}
+		bookArray.remove(book);
+		System.out.println("remove success");
 	}
 	
 	public static boolean isISBNValid(String isbnInput) {

@@ -1,11 +1,13 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
-public class RegularMember implements LibraryData {
+public class RegularMember implements LibraryData ,Comparable<RegularMember>{
 
 	private String memberName;
 	private long id;
 	protected int limit = 1;
+	private double totalOverdue = 0;
 	
 	private ArrayList<Book> checkedOutBooks = new ArrayList<Book>();;
 	private Iterator<Book> checkedOutBookIterator;
@@ -191,5 +193,25 @@ public class RegularMember implements LibraryData {
 			total += article.calculateCost();
 		}
 		return total;
+	}
+	
+	private void printTotalOverdue() {
+		totalOverdue = calculateCost();
+		System.out.println("Member " + memberName + " with user id " + id + " is due to pay " + totalOverdue + " TRL.");
+	}
+
+	@Override
+	public int compareTo(RegularMember otherMember) {
+		double diff = this.totalOverdue - otherMember.totalOverdue;
+		if (diff > 0) return 1;
+		if (diff < 0) return -1;
+		return 0;
+	}
+	
+	public static void printAllTotalOverdue() {
+		Collections.sort(memberArray);
+		for (RegularMember member : memberArray) {
+			member.printTotalOverdue();
+		}
 	}
 }
