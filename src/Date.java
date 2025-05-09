@@ -35,23 +35,22 @@ public class Date {
 		return new Date(currentDate.getDayOfMonth(), currentDate.getMonthValue(), currentDate.getYear());
 	}
 	
-	public static boolean isDateValid(int d, int m, int y) {
+	public static void dateValidator(int d, int m, int y) throws NotValidDateException {
+		boolean valid = true;
 		if (!(1 <= m && m < 13)) {
-			System.out.println("ERR: Invalid month.");
-			return false;
+			valid = false;
 		}
 		
 		if (!(1 <= y && y <= 9999)) {
-			System.out.println("ERR: Invalid year.");
-			return false;
+			valid = false;
 		}
 					
 		if (!(1 <= d && d <= getMaxDays(m, y))) {
-			System.out.println("ERR: Invalid day.");
-			return false;
+			valid = false;
 		}
 		
-		return true;
+		if (!valid) throw new NotValidDateException("ERR: Invalid date.");
+		
 	}
 	
 	private static int getMaxDays(int month, int year) {

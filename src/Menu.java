@@ -115,7 +115,12 @@ public abstract class Menu { // can be abstract since i wont be creating any Men
 		String name = input.nextLine();
 		System.out.print("Enter ISBN number:");
 		String isbn = input.nextLine();
-		if (!Book.isISBNValid(isbn)) return;
+		try {
+			Book.authenticateISBN(isbn);
+		} catch (ISBNMismatchException e) {
+			System.out.println(e.getMessage());
+			return;
+		}
 		System.out.print("Enter price:");
 		int price = input.nextInt();
 		
@@ -213,16 +218,17 @@ public abstract class Menu { // can be abstract since i wont be creating any Men
 				month = input.nextInt();
 				System.out.print("Enter due day (DD): ");
 				day = input.nextInt();
-				if (Date.isDateValid(day, month, year)) {
-					Date dueDate = new Date(day, month, year);
-					theBook = new Book(theBook.getBookName(), theBook.getBookISBN(), dueDate, theBook.getPrice());
-					theMember.appendToCheckedOutBooks(theBook);
-					Book.removeFromBookArray(theBook);
-					System.out.println("The book with name '" + theBook.getBookName() + "' (ISBN#:" + theBook.getBookISBN() + ") is checked out by user " + theMember.getMemberName() + ".");
+				try {
+					Date.dateValidator(day, month, year);
+				} catch (NotValidDateException e) {
+					System.out.println(e.getMessage());
 					return;
 				}
-				System.out.println("ERR: Invalid date.");
-				waitForKey();
+				Date dueDate = new Date(day, month, year);
+				theBook = new Book(theBook.getBookName(), theBook.getBookISBN(), dueDate, theBook.getPrice());
+				theMember.appendToCheckedOutBooks(theBook);
+				Book.removeFromBookArray(theBook);
+				System.out.println("The book with name '" + theBook.getBookName() + "' (ISBN#:" + theBook.getBookISBN() + ") is checked out by user " + theMember.getMemberName() + ".");
 				return;
 			}
 			System.out.println("ERR: There is no book with the ISBN#:" + isbn);

@@ -67,19 +67,19 @@ public class Book extends LibraryMaterial {
 		System.out.println("remove success");
 	}
 	
-	public static boolean isISBNValid(String isbnInput) {
-		String part = isbnInput.substring(0, 4);
-		if (part.equals("978-")) {
-			for (Book book : bookArray) {
-				if (book == null) break;
-				if (book.isbn.equals(isbnInput)) {
-					System.out.println("ERR: This ISBN already exists in database, select another.");
-					return false;
-				}
+	public static void authenticateISBN(String isbnInput) throws ISBNMismatchException {
+		boolean multBy3 = false;
+		int sum = 0;
+		for (char c : isbnInput.toCharArray()) {
+			if (c == '-') continue;
+			int num = Integer.parseInt(String.valueOf(c));
+			if (multBy3) {
+				sum += num * 3;
 			}
-			return true;
+			else sum += num;
+			multBy3 = !multBy3;
 		}
-		return false;
+		if (sum % 10 != 0) throw new ISBNMismatchException("ERR: Invalid ISBN.");
 	}
 
 	@Override
