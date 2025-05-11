@@ -49,7 +49,7 @@ public class Date {
 			valid = false;
 		}
 		
-		if (!valid) throw new NotValidDateException("ERR: Invalid date.");
+		if (!valid) throw new NotValidDateException("ERR: Invalid date(" + d + "/" + m + "/" + y + ").");
 		
 	}
 	

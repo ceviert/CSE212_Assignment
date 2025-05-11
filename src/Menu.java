@@ -118,7 +118,7 @@ public abstract class Menu { // can be abstract since i wont be creating any Men
 		try {
 			Book.authenticateISBN(isbn);
 		} catch (ISBNMismatchException e) {
-			System.out.println(e.getMessage());
+			System.err.println(e.getMessage());
 			return;
 		}
 		System.out.print("Enter price:");
