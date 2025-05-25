@@ -2,19 +2,28 @@ import java.util.Scanner;
 
 public abstract class Menu { // can be abstract since i wont be creating any Menu instances???
 	
-	private static enum SUBMENU {
-		ZERO,
-		ADD_NEW_BOOK,
-		ADD_NEW_ONLINE_ARTICLE,
-		CREATE_MEMBER_ACCOUNT,
-		CHECKOUT_BOOK,
-		RETURN_BOOK,
-		GIVE_ACCESS_TO_ONLINE_ARTICLE,
-		REVOKE_ACCESS_TO_ONLINE_ARTICLE,
-		DISPLAY_ALL_ACCOUNTS,
-		DISPLAY_LIBRARY_DATABASE,
-		MEMBERS_WITH_OVERDUE_DESCENDING,
-		EXIT;
+	public static enum SUBMENU {
+		ADD_NEW_BOOK("Add a new book"),
+		ADD_NEW_ONLINE_ARTICLE("Add a new online article"),
+		CREATE_MEMBER_ACCOUNT("Create a member account"),
+		CHECKOUT_BOOK("Check out a book"),
+		RETURN_BOOK("Return a book"),
+		GIVE_ACCESS_TO_ONLINE_ARTICLE("Give access to an online article"),
+		REVOKE_ACCESS_TO_ONLINE_ARTICLE("End an online article access"),
+		DISPLAY_ALL_ACCOUNTS("Display all accounts"),
+		DISPLAY_LIBRARY_DATABASE("Display library database"),
+		MEMBERS_WITH_OVERDUE_DESCENDING("Members with overdue payments (descending)"),
+		EXIT("Exit");
+		
+		private String label;
+		
+		SUBMENU(String label) {
+			this.label = label;
+		}
+		
+		public String toString() {
+			return label;
+		}
 		
 		private static SUBMENU[] values = SUBMENU.values();
 	}
@@ -39,7 +48,7 @@ public abstract class Menu { // can be abstract since i wont be creating any Men
 				System.out.println("ERR: You've entered invalid choice, try again. (1-6)");
 				continue;
 			}
-			SUBMENU selection = SUBMENU.values[choice];
+			SUBMENU selection = SUBMENU.values[choice - 1];
 			switch (selection) {
 			case ADD_NEW_BOOK: 
 				addNewBook(); 
@@ -74,8 +83,6 @@ public abstract class Menu { // can be abstract since i wont be creating any Men
 			case EXIT:
 				System.out.println("Goodbye!");
 				terminate = true;
-				break;
-			case ZERO:
 				break;
 			}
 			if (terminate) break;
