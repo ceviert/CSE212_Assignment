@@ -133,7 +133,7 @@ public abstract class Menu { // can be abstract since i wont be creating any Men
 		
 		Book theBook = new Book(name, isbn, price);
 		Book.appendToBookArray(theBook);
-	}
+	} 
 	
 	private static void addNewArticle() {
 		System.out.print("Enter article name: ");
