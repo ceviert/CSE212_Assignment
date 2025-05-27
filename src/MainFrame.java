@@ -57,6 +57,9 @@ public class MainFrame extends JFrame {
 				case ADD_NEW_ONLINE_ARTICLE:
 					AddNewOnlineArticleFrame.init();
 					break;
+				case CREATE_MEMBER_ACCOUNT:
+					CreateMemberAccountFrame.init();
+					break;
 				}
 			}
 		}

@@ -67,6 +67,7 @@ public class AddNewOnlineArticleFrame extends JFrame {
 			} else {
 				OnlineArticle theArticle = new OnlineArticle(articleNameField.getText(), DOIField.getText(), publisherfField.getText());
 				OnlineArticle.addToArticleArray(theArticle);
+				Popup.init(AddNewOnlineArticleFrame.this, Popup.ARTICLE_ADD_SUCCESS);
 			}
 		}
 		

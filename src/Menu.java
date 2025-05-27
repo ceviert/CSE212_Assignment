@@ -28,10 +28,20 @@ public abstract class Menu { // can be abstract since i wont be creating any Men
 		private static SUBMENU[] values = SUBMENU.values();
 	}
 	
-	private static enum ACCOUNT_TYPES {
-		REGULAR,
-		STUDENT,
-		ACADEMIC;
+	public static enum ACCOUNT_TYPES {
+		REGULAR("Regular"),
+		STUDENT("Student"),
+		ACADEMIC("Academic");
+		
+		private String label;
+		
+		ACCOUNT_TYPES(String label) {
+			this.label = label;
+		}
+		
+		public String toString() {
+			return label;
+		}
 		
 		private static ACCOUNT_TYPES[] values = ACCOUNT_TYPES.values();
 	}
