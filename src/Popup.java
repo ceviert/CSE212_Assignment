@@ -11,6 +11,8 @@ public abstract class Popup extends JOptionPane{
 	public static final int ID_NOT_AVAILABLE = 4;
 	public static final int ARTICLE_ADD_SUCCESS = 5;
 	public static final int MEMBER_CREATE_SUCCESS = 6;
+	public static final int INVALID_INPUT = 7;
+	public static final int EMPTY_DATABASE = 8;
 	
 	public static void init(Component parent, int type) {
 		switch (type) {
@@ -31,6 +33,12 @@ public abstract class Popup extends JOptionPane{
 			break;
 		case ARTICLE_ADD_SUCCESS:
 			JOptionPane.showMessageDialog(parent, "Article added successfully!", null, JOptionPane.PLAIN_MESSAGE);
+			break;
+		case INVALID_INPUT:
+			JOptionPane.showMessageDialog(parent, "Invalid input!", null, JOptionPane.ERROR_MESSAGE);
+			break;
+		case EMPTY_DATABASE:
+			JOptionPane.showMessageDialog(parent, "Database is empty! Add some and try again.", null, JOptionPane.WARNING_MESSAGE);
 			break;
 		}
 		

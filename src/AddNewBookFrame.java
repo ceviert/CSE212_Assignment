@@ -47,6 +47,9 @@ public class AddNewBookFrame extends JFrame{
 		
 		add(mainPanel);
 		
+		bookNameField.addActionListener(new ActionHandler());
+		ISBNField.addActionListener(new ActionHandler());
+		priceField.addActionListener(new ActionHandler());
 		submitButton.addActionListener(new ActionHandler());
 	}
 	
@@ -67,8 +70,11 @@ public class AddNewBookFrame extends JFrame{
 				Book theBook = new Book(bookNameField.getText(), ISBNField.getText(), Integer.parseInt(priceField.getText()));
 				Book.appendToBookArray(theBook);
 				Popup.init(AddNewBookFrame.this, Popup.BOOK_ADD_SUCCESS);
+				dispose();
 			} catch (ISBNMismatchException e1) {
 				Popup.init(AddNewBookFrame.this, Popup.ISBN_MISMATCH);
+			}  catch (NumberFormatException e1) {
+				Popup.init(AddNewBookFrame.this, Popup.INVALID_INPUT);
 			}
 		}
 		

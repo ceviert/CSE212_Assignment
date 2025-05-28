@@ -47,7 +47,11 @@ public class AddNewOnlineArticleFrame extends JFrame {
 		
 		add(mainPanel);
 		
+		articleNameField.addActionListener(new ActionHandler());
+		DOIField.addActionListener(new ActionHandler());
+		publisherfField.addActionListener(new ActionHandler());
 		submitButton.addActionListener(new ActionHandler());
+
 	}
 
 	public static void init() {
@@ -62,12 +66,16 @@ public class AddNewOnlineArticleFrame extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (!OnlineArticle.isDOIValid(DOIField.getText())) {
+			if (articleNameField.getText().equals("") || DOIField.getText().equals("") || publisherfField.getText().equals("") ) {
+				Popup.init(AddNewOnlineArticleFrame.this, Popup.INVALID_INPUT);
+			}
+			else if (!OnlineArticle.isDOIValid(DOIField.getText())) {
 				Popup.init(AddNewOnlineArticleFrame.this, Popup.INVALID_DOI);
 			} else {
 				OnlineArticle theArticle = new OnlineArticle(articleNameField.getText(), DOIField.getText(), publisherfField.getText());
 				OnlineArticle.addToArticleArray(theArticle);
 				Popup.init(AddNewOnlineArticleFrame.this, Popup.ARTICLE_ADD_SUCCESS);
+				dispose();
 			}
 		}
 		

@@ -49,6 +49,8 @@ public class CreateMemberAccountFrame extends JFrame {
 		
 		add(mainPanel);
 		
+		nameField.addActionListener(new ActionHandler());
+		idField.addActionListener(new ActionHandler());
 		submitButton.addActionListener(new ActionHandler());
 		
 	}
@@ -65,23 +67,28 @@ public class CreateMemberAccountFrame extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (RegularMember.isIdAvailable(Long.parseLong(idField.getText()))) {
-				Menu.ACCOUNT_TYPES type = (Menu.ACCOUNT_TYPES) memberTypeComboBox.getSelectedItem();
-				RegularMember theMember = null;
-				switch (type) {
-				case REGULAR:
-					theMember = new RegularMember(nameField.getText(), Long.parseLong(idField.getText()));
-					break;
-				case STUDENT:
-					theMember = new Student(nameField.getText(), Long.parseLong(idField.getText()));
-					break;
-				case ACADEMIC:
-					theMember = new Academic(nameField.getText(), Long.parseLong(idField.getText()));
-					break;
+			try {
+				if (RegularMember.isIdAvailable(Long.parseLong(idField.getText()))) {
+					Menu.ACCOUNT_TYPES type = (Menu.ACCOUNT_TYPES) memberTypeComboBox.getSelectedItem();
+					RegularMember theMember = null;
+					switch (type) {
+					case REGULAR:
+						theMember = new RegularMember(nameField.getText(), Long.parseLong(idField.getText()));
+						break;
+					case STUDENT:
+						theMember = new Student(nameField.getText(), Long.parseLong(idField.getText()));
+						break;
+					case ACADEMIC:
+						theMember = new Academic(nameField.getText(), Long.parseLong(idField.getText()));
+						break;
+					}
+					Popup.init(CreateMemberAccountFrame.this, Popup.MEMBER_CREATE_SUCCESS, type.toString(), nameField.getText(), idField.getText());
+					dispose();
+				} else {
+					Popup.init(CreateMemberAccountFrame.this, Popup.ID_NOT_AVAILABLE);
 				}
-				Popup.init(CreateMemberAccountFrame.this, Popup.MEMBER_CREATE_SUCCESS, type.toString(), nameField.getText(), idField.getText());
-			} else {
-				Popup.init(CreateMemberAccountFrame.this, Popup.ID_NOT_AVAILABLE);
+			} catch (NumberFormatException e1) {
+				Popup.init(CreateMemberAccountFrame.this, Popup.INVALID_INPUT);
 			}
 		}
 		
