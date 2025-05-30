@@ -60,6 +60,21 @@ public class MainFrame extends JFrame {
 				case CREATE_MEMBER_ACCOUNT:
 					CreateMemberAccountFrame.init();
 					break;
+				case CHECKOUT_BOOK:
+					CheckOutBookFrame.init();
+					break;
+				case RETURN_BOOK:
+					ReturnBookFrame.init();
+					break;
+				case GIVE_ACCESS_TO_ONLINE_ARTICLE:
+					GiveAccessToOnlineArticleFrame.init();
+					break;
+				case REVOKE_ACCESS_TO_ONLINE_ARTICLE:
+					RevokeAccessToOnlineArticleFrame.init();
+					break;
+				case EXIT:
+					dispose();
+					break;
 				}
 			}
 		}

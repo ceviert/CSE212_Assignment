@@ -1,18 +1,21 @@
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
-
-import com.sun.org.apache.bcel.internal.generic.POP;
 
 public class CheckOutBookFrame extends JFrame {
 
 	private JLabel memberIdLabel, bookIsbnLabel, dueYearLabel, dueMonthLabel, dueDayLabel;
 	private JTextField memberIdField, bookIsbnField, dueYearField, dueMonthField, dueDayField;
 	private JButton submitButton;
+	
+	private JPanel mainPanel;
 	
 	public CheckOutBookFrame() {
 		super(Menu.SUBMENU.CHECKOUT_BOOK.toString());
@@ -29,10 +32,29 @@ public class CheckOutBookFrame extends JFrame {
 		dueMonthLabel = new JLabel("Due Month (MM)");
 		dueMonthField = new JTextField();
 		
-		dueDayLabel = new JLabel();
+		dueDayLabel = new JLabel("Due Day (DD)");
 		dueDayField = new JTextField();
 		
-		submitButton = new JButton();
+		submitButton = new JButton("Submit");
+		
+		mainPanel = new JPanel(new GridLayout(6, 2, 5, 5));
+		
+		mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		
+		mainPanel.add(memberIdLabel);
+		mainPanel.add(memberIdField);
+		mainPanel.add(bookIsbnLabel);
+		mainPanel.add(bookIsbnField);
+		mainPanel.add(dueYearLabel);
+		mainPanel.add(dueYearField);
+		mainPanel.add(dueMonthLabel);
+		mainPanel.add(dueMonthField);
+		mainPanel.add(dueDayLabel);
+		mainPanel.add(dueDayField);
+		mainPanel.add(new JLabel()); 
+		mainPanel.add(submitButton);
+		
+		add(mainPanel);
 		
 		memberIdField.addActionListener(new ActionHandler());
 		bookIsbnField.addActionListener(new ActionHandler());
@@ -45,7 +67,7 @@ public class CheckOutBookFrame extends JFrame {
 	public static void init() {
 		CheckOutBookFrame frame = new CheckOutBookFrame();
 		frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		frame.setSize(300, 180);
+		frame.setSize(300, 250);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
@@ -63,7 +85,7 @@ public class CheckOutBookFrame extends JFrame {
 					if (theMember == null) {
 						Popup.init(CheckOutBookFrame.this, Popup.USER_NOT_FOUND);
 					} else {
-						if (theMember.hasReachedArticleLimit()) {
+						if (theMember.hasReachedBookLimit()) {
 							Popup.init(CheckOutBookFrame.this, Popup.USER_AT_LIMIT);
 							dispose();
 						} else {
@@ -86,7 +108,6 @@ public class CheckOutBookFrame extends JFrame {
 			} catch (Exception e1) {
 				Popup.init(CheckOutBookFrame.this, Popup.INVALID_INPUT);
 			}
-		
+		}
 	}
-	
 }
